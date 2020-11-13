@@ -1,16 +1,18 @@
 from flask import (
     Flask,
-    request
+    request,
+    make_response
 )
 
-from database.node_control import *
 from auth import *
 from datetime import timedelta
 import logging
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(64)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
 
+'''
 @app.route("/")
 def hello():
     return "Hello World!"
@@ -28,8 +30,9 @@ def uwu():
 
     logging.warning(f"add node to user")
     return "uwu"
+'''
 
-app.register_blueprint(api)
+app.register_blueprint(auth_api)
 
 if __name__ == "__main__":
     app.run()
