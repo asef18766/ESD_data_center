@@ -29,6 +29,11 @@ def decodeJWT(session:bytes)->dict:
     return s['data']
 
 def login_required(func):
+    '''
+    this function will attemp to grap the session cookie (GGJWT) from user's
+    request, and pack them into fuction paramether (kwargs), see craftJWT fuction
+    for further content info.
+    '''
     def wrapper(*args, **kwargs):
         try:
             sess:str = request.cookies.get(JWT_NAME)

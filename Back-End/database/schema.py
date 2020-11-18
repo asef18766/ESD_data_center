@@ -11,28 +11,17 @@ from mongoengine.fields import (
     EmbeddedDocumentField,
     EmbeddedDocumentListField,
     ListField,
-    ReferenceField
+    ReferenceField,
+    DictField
 )
-class IDeviceConnectMethod(EmbeddedDocument):
-    conn_type = StringField(max_length=255)
-    meta = {'allow_inheritance': True}
-
-class InternetConnect(IDeviceConnectMethod):
-    ip = StringField(max_length=255)
-    port = IntField()
-
-class UsbConnect(IDeviceConnectMethod):
-    fd = StringField(max_length=1000)
 
 class DeviceMeta(Document):
-    hid = StringField(max_length=100,primary_key=True) # hash(node_token|device name)
+    hid = StringField(max_length=100,primary_key=True) # md5(node_token|device name)
     name = StringField(max_length=100)
-    icon_link = URLField()
-    worker_type = BooleanField(required=True)
+    worker_type = BooleanField(required=True) # true for input, false for output
     min_throughput = FloatField(required=True)
     max_throughput = FloatField(required=True)
     unit = StringField(max_length=100)
-    connection_method = EmbeddedDocumentField(IDeviceConnectMethod)
 
 class DeviceLog(Document):
     device = ReferenceField(DeviceMeta)
@@ -49,17 +38,19 @@ class OperateFactor(EmbeddedDocument):
     solutions = ListField(EmbeddedDocumentField(OperateUnit, required=True))
 
 class NodeConfig(Document):
-    version = StringField()
+    version = IntField()
+    node_name = StringField(max_length=1000)
+    icon_link = URLField()
+    connection_method = DictField()
     configures = EmbeddedDocumentListField(OperateFactor)
+    device_icons = DictField() # key:hid, value:URL
 
 class FarmNode(Document):
     token = StringField(max_length=1000, primary_key=True)
-    node_name = StringField(max_length=1000)
-    icon_link = URLField()
     input_devices = ListField(ReferenceField(DeviceMeta))
     output_devices = ListField(ReferenceField(DeviceMeta))
-    dev_logs = ListField(ReferenceField(DeviceLog))
     config = ReferenceField(NodeConfig)
+    dev_logs = ListField(ReferenceField(DeviceLog))
 
 class User(Document):
     identity = StringField(primary_key=True)
