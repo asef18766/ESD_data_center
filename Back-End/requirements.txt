@@ -3,3 +3,4 @@ gunicorn
 mongoengine
 PyJWT
 requests
+redis

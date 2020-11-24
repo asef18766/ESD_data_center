@@ -1,1 +1,4 @@
 MongoDB/*
+
+__pycache__
+*.log

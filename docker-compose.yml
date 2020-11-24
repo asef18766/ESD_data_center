@@ -18,5 +18,7 @@ services:
     build: ./Back-End
     environment:
       - MONGO_HOST=mongo
+    volumes:
+      - ./Back-End:/app
     ports: 
       - "8080:8080"
