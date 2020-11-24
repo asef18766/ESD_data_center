@@ -1,8 +1,12 @@
 from .node import (
     get_node_instance
 )
+from .user import (
+    get_user_instance
+)
 from ..schema import (
-    DeviceMeta
+    DeviceMeta,
+    FarmNode
 )
 from mongoengine.errors import (
     DoesNotExist
@@ -57,5 +61,24 @@ def register_devices(node_token:str, i_devs:list, o_devs:list)->(list, list):
     
     return (i_dev_list, o_dev_list)
 
+def dev_name_2_hid(nodes:list, dev_names:list)->dict:
+    res = {}
+    for k in dev_names:
+        res.update({k:[]})
 
-            
+    for node in nodes:
+        node = get_node_instance(node)
+        hid = None
+        for dm in node.input_devices:
+            if dm.name in dev_names:
+                res[dm.name].append(dm.hid)
+        
+        for dm in node.output_devices:
+            if dm.name in dev_names:
+                res[dm.name].append(dm.hid)
+    
+    for k,v in res:
+        if v == []:
+            raise IndexError(f"device name {k}")
+    
+    return res

@@ -14,7 +14,11 @@ from database.node.node import (
 from database.node.user import (
     list_user_node,
     assign_node_owner,
-    user_has_node
+    user_has_node,
+    check_node_owner
+)
+from database.node.device import (
+    dev_name_2_hid
 )
 from auth import login_required
 import logging
@@ -38,18 +42,17 @@ def create():
 @login_required
 def node(*args, **kwargs):
     action = request.args.get("operate")
-
+    user_id = kwargs["user_id"]
     if action == "list_all":
-        return make_response({"nodes":list_user_node(kwargs["user_id"])}, 200)
+        return make_response({"nodes":list_user_node(user_id)}, 200)
 
-    
     elif action == "create":
         node_token:dict=request.json
         if "node_token" not in node_token:
             return make_response("format error", 403)
         node_token:str = node_token["node_token"]
         try:
-            assign_node_owner(node_token, kwargs["user_id"])
+            assign_node_owner(node_token, user_id)
             return make_response({"result":"success"},200)
         except IndexError:
             return make_response({"result":"not exsist"},200)
@@ -58,14 +61,26 @@ def node(*args, **kwargs):
     
     elif action == "view_cfg":
         node_token:str = request.args.get("id")
-        if not user_has_node(kwargs["user_id"], node_token):
+        if not user_has_node(user_id, node_token):
             return make_response({"msg":"deny"}, 403)
         return make_response(get_node_config(node_token),200)
+    
     elif action == "update_cfg":
         node_token:str = request.args.get("id")
-        if not user_has_node(kwargs["user_id"], node_token):
+        if not user_has_node(user_id, node_token):
             return make_response({"msg":"deny"}, 403)
         update_node_config(node_token, request.json)
         return "OK"
+    
+    elif action == "set_stat_cfg":
+        '''
+        this will check user's query and setup further query condition cache
+        '''
+        data:dict = request.json
+        node_ids = check_node_owner(user_id, data["node_ids"])
+        hids = dev_name_2_hid(node_ids, data["dev_name"])
+        rule = data["group"]
+        # WIP
+
 
     return make_response({"msg":"no such action"},404)
