@@ -20,6 +20,11 @@ from database.node.user import (
 from database.node.device import (
     dev_name_2_hid
 )
+from cache.query import (
+    set_user_query_prefer,
+    get_user_prefer,
+    execute_query
+)
 from auth import login_required
 import logging
 import os
@@ -77,10 +82,28 @@ def node(*args, **kwargs):
         this will check user's query and setup further query condition cache
         '''
         data:dict = request.json
+        
         node_ids = check_node_owner(user_id, data["node_ids"])
-        hids = dev_name_2_hid(node_ids, data["dev_name"])
+        hids, pics = dev_name_2_hid(node_ids, data["dev_name"])
         rule = data["group"]
-        # WIP
-
+        user_cfg = {}
+        
+        target_hids = []
+        for dn, hidl in hids:
+            user_cfg.update({
+                dn:{
+                    "target_hids":hidl,
+                    "icon_link":pics[dn]
+                }
+            })
+            target_hids += hidl
+        set_user_query_prefer(user_id, target_hids, rule, user_cfg)
+        return make_response("OK", 200)
+    
+    elif action == "v_stat":
+        return make_response(execute_query(user_id), 200) 
+    
+    elif action == "get_s_pref":
+        return make_response(get_user_prefer(user_id), 200)
 
     return make_response({"msg":"no such action"},404)

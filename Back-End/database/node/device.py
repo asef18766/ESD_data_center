@@ -61,24 +61,37 @@ def register_devices(node_token:str, i_devs:list, o_devs:list)->(list, list):
     
     return (i_dev_list, o_dev_list)
 
-def dev_name_2_hid(nodes:list, dev_names:list)->dict:
+def dev_name_2_hid(nodes:list, dev_names:list)->(dict, dict):
+    '''
+    return a dictionary key defined as device name,
+    value as a list of hids
+    '''
     res = {}
+    pic_url = {}
     for k in dev_names:
         res.update({k:[]})
+        pic_url.update({k:""})
 
     for node in nodes:
         node = get_node_instance(node)
+        dev_icons = node.config.device_icons
         hid = None
         for dm in node.input_devices:
             if dm.name in dev_names:
                 res[dm.name].append(dm.hid)
+                url = dev_icons[dm.hid]
+                if url is not None and url is not "":
+                    pic_url[dm.name] = dev_icons[dm.hid]
         
         for dm in node.output_devices:
             if dm.name in dev_names:
                 res[dm.name].append(dm.hid)
+                url = dev_icons[dm.hid]
+                if url is not None and url is not "":
+                    pic_url[dm.name] = dev_icons[dm.hid]
     
     for k,v in res:
         if v == []:
             raise IndexError(f"device name {k}")
     
-    return res
+    return res, pic_url

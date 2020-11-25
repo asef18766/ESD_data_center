@@ -25,3 +25,13 @@ def write_cache(record:dict):
     if red.llen(key) >= RECORD_BUFSZ:
         save_cache(record['token'], record['device'])
 
+def get_latest_record(node_uuid:str, hid:str)->float:
+    red = redis.StrictRedis(connection_pool=REDIS_POOL)
+    serial_num = red.get(f"dev-{hid}-serial-num")
+    if serial_num is None:
+        raise IndexError(f"can not get hid {hid} serial num")
+
+    rec = red.lindex(f"node-{node_uuid}-dev-{serial_num}-record", -1)
+    if rec is None:
+        raise IndexError(f"can not get lasted record of node-{node_uuid}-dev-{serial_num}-record")
+    return rec
