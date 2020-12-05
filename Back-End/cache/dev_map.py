@@ -17,7 +17,9 @@ def create_map(node_uuid:str, devices:list)->dict:
             raise Exception(f"unable to write reverse device mapping on node_uuid {node_uuid}")
 
         maps.update({devices[i]:i})
-        red.lpush(f"node-{node_uuid}-dev-{i}-record",0)
+        red.lpush(f"node-{node_uuid}-dev-{i}-record", 0)
+        red.lpush(f"node-{node_uuid}-dev-{i}-timestamp", 0)
+        
     return maps
 
 def get_hid(node_uuid:str, dev_serial_num:int)->str:

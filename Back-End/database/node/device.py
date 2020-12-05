@@ -79,18 +79,22 @@ def dev_name_2_hid(nodes:list, dev_names:list)->(dict, dict):
         for dm in node.input_devices:
             if dm.name in dev_names:
                 res[dm.name].append(dm.hid)
+                if dm.hid not in dev_icons:
+                    continue
                 url = dev_icons[dm.hid]
-                if url is not None and url is not "":
+                if url != None and url != "":
                     pic_url[dm.name] = dev_icons[dm.hid]
         
         for dm in node.output_devices:
             if dm.name in dev_names:
                 res[dm.name].append(dm.hid)
+                if dm.hid not in dev_icons:
+                    continue
                 url = dev_icons[dm.hid]
-                if url is not None and url is not "":
+                if url != None and url != "":
                     pic_url[dm.name] = dev_icons[dm.hid]
     
-    for k,v in res:
+    for k,v in res.items():
         if v == []:
             raise IndexError(f"device name {k}")
     

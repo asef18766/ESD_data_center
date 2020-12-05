@@ -4,3 +4,4 @@ mongoengine
 PyJWT
 requests
 redis
+openpyxl

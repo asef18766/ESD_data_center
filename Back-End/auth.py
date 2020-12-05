@@ -53,7 +53,7 @@ def register():
     finally:
         return make_response({"result":"failed"}, 400)
 
-@auth_api.route("/login", methods=["GET"])
+@auth_api.route("/login", methods=["POST"])
 def login():
     data:dict = request.json
     print(f"receive data:{data}")
@@ -64,18 +64,3 @@ def login():
     resp.set_cookie(JWT_NAME, value=craftJWT(data["identity"]).decode())
     return resp
 
-
-# test route
-# must be removed in the future 
-@auth_api.route("/get_cookie" , methods = ["GET"])
-def cook():
-    resp = make_response({"result":"success"}, 200)
-    resp.set_cookie("GG", value="shorter_cookie")
-    return resp
-
-# test route
-# must be removed in the future 
-@auth_api.route("/test", methods=["GET"])
-@login_required
-def test(*args, **kwargs):
-    return "OAO?"

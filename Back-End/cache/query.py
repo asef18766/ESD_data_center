@@ -20,7 +20,7 @@ def get_user_prefer(user_id:str)->dict:
     user_pref:bytes = red.get(f"{prefix}-web-page-map")
     if user_pref is None:
         raise IndexError(f"can not obtain preference of user {user_id}")
-    return dumps(user_pref)
+    return loads(user_pref)
 
 def set_user_query_prefer(user_id:str, hids:list, group:str, fe_required_info:dict):
     red = redis.StrictRedis(connection_pool=REDIS_POOL)
@@ -47,9 +47,10 @@ def execute_query(user_id:str)->dict:
     hids = red.lrange(f"{prefix}-hids", 0, -1)
     res = {}
     for hid in hids:
+        hid = hid.decode()
         node_id = get_device_owner(hid)
+        # TODO: now only support lastest
         rec = get_latest_record(node_id, hid)
         # TODO: configure comparison
         res.update({hid:rec})
-        
     return res

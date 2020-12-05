@@ -12,7 +12,8 @@ from mongoengine.fields import (
     EmbeddedDocumentListField,
     ListField,
     ReferenceField,
-    DictField
+    DictField,
+    DateTimeField
 )
 
 class DeviceMeta(Document):
@@ -23,9 +24,14 @@ class DeviceMeta(Document):
     max_throughput = FloatField(required=True)
     unit = StringField(max_length=100)
 
+class FarmNode(Document):
+    pass
+
 class DeviceLog(Document):
     device = ReferenceField(DeviceMeta)
+    owner = ReferenceField(FarmNode)
     data = FloatField(required = True)
+    timestamp = DateTimeField(required = True)
 
 class OperateUnit(EmbeddedDocument):
     output_device = ReferenceField(DeviceMeta , required=True)
