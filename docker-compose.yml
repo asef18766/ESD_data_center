@@ -14,10 +14,16 @@ services:
     ports: 
       - "8081:8081"
   
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
   web:
     build: ./Back-End
-    environment:
-      - MONGO_HOST=mongo
+    env_file:
+      - .env
     volumes:
       - ./Back-End:/app
     ports: 

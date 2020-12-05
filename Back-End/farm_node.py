@@ -37,10 +37,10 @@ def register():
 @farm_node_api.route("/send_data", methods=["POST"])
 def receiver():
     data:dict = request.json
-    #try:
-    write_cache(data)
-    '''
+    try:
+        write_cache(data)
     except IndexError as e:
+        logging.error(e)
         return make_response("invaild", 400)
-    '''
+
     return make_response("OK")
