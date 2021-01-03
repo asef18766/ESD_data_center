@@ -1,9 +1,9 @@
-flask
-gunicorn
-mongoengine
-PyJWT
-requests
-redis
-openpyxl
-celery
-pyserial
+flask == 1.1.2
+gunicorn == 20.0.4
+mongoengine == 0.20.0
+PyJWT == 1.7.1
+requests == 2.22.0
+redis == 3.5.3
+openpyxl == 3.0.5
+celery == 5.0.5
+pyserial == 3.4
