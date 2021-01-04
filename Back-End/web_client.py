@@ -29,6 +29,9 @@ from cache.query import (
     get_user_prefer,
     execute_query
 )
+from cache.node_config import (
+    load_lastest_node_cfg
+)
 from utils import (
     str_to_datetime,
     export_devlog_to_file
@@ -37,7 +40,12 @@ from auth import login_required
 import json
 import logging
 import os
+from logging import (
+    error
+)
+from traceback import format_exc
 from uuid import uuid4
+from celery_app.client import test_connect
 
 admin_token = os.getenv("ADMIN_TOKEN", "SUPER_ADMIN_TOKEN")
 web_client_api = Blueprint("web_client_api", __name__)
@@ -85,7 +93,22 @@ def node(*args, **kwargs):
         node_token:str = request.args.get("id")
         if not user_has_node(user_id, node_token):
             return make_response({"msg":"deny"}, 403)
-        update_node_config(node_token, request.json)
+        try:
+            user_config = request.json
+            node:FarmNode = get_node_instance(node_token)
+            if node is None:
+                raise IndexError(f"can not found node {node_token}")
+
+            # check for connection
+            #if not test_connect(node_token, user_config["configures"]):
+            #    raise ConnectionError(f"can not link to target device with config {user_config['configures']}")
+
+            update_node_config(node_token, user_config)
+            #load_lastest_node_cfg(node_token)
+            
+        except Exception as e:
+            error(format_exc())
+            return make_response({"msg":"invaild config"}, 400)
         return "OK"
     
     elif action == "set_stat_cfg":

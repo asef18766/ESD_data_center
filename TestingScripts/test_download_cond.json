@@ -1,0 +1,10 @@
+{
+    "node_id":["2051c2d21f645e6c"],
+    "hids":["deadbeef01"],
+    "ts_range":{
+        "gt":"",
+        "lt":""
+    },
+    "group":"none",
+    "max_record_count":48763
+}

@@ -21,6 +21,11 @@ def get_device_instance(hid:str)->DeviceMeta:
         raise IndexError(f"can not found device with hid {hid}")
     return dev
 
+def dev_meta_2_dict(devmeta:DeviceMeta)->dict:
+    res:dict = devmeta.to_mongo().to_dict()
+    res.pop("_id")
+    return res
+
 def register_devices(node_token:str, i_devs:list, o_devs:list)->(list, list):
     node = get_node_instance(node_token)
     
