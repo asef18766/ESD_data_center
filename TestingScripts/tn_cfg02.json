@@ -1,0 +1,41 @@
+{
+    "connection_method":
+    {
+        "type":"USB_Connection",
+        "fd":"/dev/ttyUSB0"
+    },
+    "device_icons":
+    {
+        "44c763bbcadcfd06d2bc866dc87ab5":"https://www.taiwaniot.com.tw/wp-content/uploads/2016/06/41dkxMHungL.jpg"
+    },
+    "icon_link":"https://img.icons8.com/ios/452/farm.png",
+    "node_name":"my farm",
+    "configures":
+    [
+        {
+            "input_device":"3316bb6235b78eaefc6ba95cf9e10b",
+            "condiction":"gt",
+            "value":100,
+            "solutions":
+            [
+                {
+                    "output_device":"c12a2fa9328ea5b4cec1cfc7ff00c3",
+                    "operate":true
+                }
+            ]
+        },
+        {
+            "input_device":"afe92dd1ed7769b9de2f92fddc65a0",
+            "condiction":"gt",
+            "value":50,
+            "solutions":
+            [
+                {
+                    "output_device":"c12a2fa9328ea5b4cec1cfc7ff00c3",
+                    "operate":true
+                }
+            ]
+        }
+    ]
+}
+

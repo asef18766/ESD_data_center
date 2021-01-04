@@ -1,32 +1,26 @@
-from requests import (
-    Session
-)
-from auth import (
-    create_session
-)
-from config import API_BASE
+import click
+import json
+from spreadsheet.download import download_xml
+from config_upload.uploader import upload_cfg
+@click.group()
+def cmd_entry():
+    '''
+    cli for Universal Farm System
+    '''
+    pass
 
-def download_xml(sess:Session):
-    payload = {
-        "node_id":["2051c2d21f645e6c"],
-        "hids":["deadbeef01"],
-        "ts_range":{
-            "gt":"",
-            "lt":""
-        },
-        "group":"none",
-        "max_record_count":48763
-    }
-    print("send request")
-    with sess.get(f"{API_BASE}/node?operate=download_ss", json=payload) as resp:
-        print("receiving response")
-        resp.raise_for_status()
-        with open("result.xlsx", 'wb') as f:
-            for chunk in resp.iter_content(chunk_size=8192): 
-                # If you have chunk encoded response uncomment if
-                # and set chunk_size parameter to None.
-                #if chunk: 
-                f.write(chunk)
+@cmd_entry.command()
+@click.option("--cfg", "config", type=click.Path(file_okay=True), required=True, help="the query constrain of download file")
+def download(config:str):
+    download_xml(file=config)
+
+@cmd_entry.command()
+@click.option("--node_id", "node_id", type=str, required=True, help="the node token of target node")
+@click.option("--cfg", "config", type=click.Path(file_okay=True), required=True, help="the configuration file of node")
+def upload_node_cfg(node_id:str, config:str):
+    upload_cfg(node_id=node_id, cfg=json.loads(open(config).read()))
 
 if __name__ == "__main__":
-    download_xml(create_session("bogay","gg"))
+    cmd_entry.add_command(download)
+    cmd_entry.add_command(upload_node_cfg)
+    cmd_entry()
